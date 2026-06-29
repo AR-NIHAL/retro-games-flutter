@@ -5,23 +5,47 @@
 [build.environment]
   FLUTTER_VERSION = "3.41.7"
 
+# Security headers for all pages
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
 
+# WASM files - immutable (change with SDK updates only)
+[[headers]]
+  for = "*.wasm"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "application/wasm"
+
+# JS files - immutable (Flutter uses content hashing in filenames)
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Dart JS files - no cache (these are the main entry points)
+[[headers]]
+  for = "main.dart.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Static assets (images, audio)
 [[headers]]
   for = "assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# Service worker - must revalidate
 [[headers]]
-  for = "*.dart"
+  for = "flutter_service_worker.js"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# SPA redirect - all routes serve index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"

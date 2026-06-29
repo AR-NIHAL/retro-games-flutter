@@ -1,12 +1,12 @@
 {
-    "name": "penalty",
-    "short_name": "penalty",
+    "name": "Penalty Shootout",
+    "short_name": "Penalties",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#0A1628",
+    "theme_color": "#1B5E20",
+    "description": "FIFA 2026 penalty shootout game. Swipe to shoot and score goals!",
+    "orientation": "portrait",
     "prefer_related_applications": false,
     "icons": [
         {

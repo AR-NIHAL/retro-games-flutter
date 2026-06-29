@@ -26,15 +26,20 @@ class ScoreBar extends StatelessWidget {
       top: 10,
       left: 12,
       right: 12,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _scorePod(),
-          const Spacer(),
-          _branding(),
-          const Spacer(),
-          _roundPod(roundProgress),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final showBranding = constraints.maxWidth >= 520;
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _scorePod(),
+              if (showBranding) const Spacer(),
+              if (showBranding) _branding(),
+              const Spacer(),
+              _roundPod(roundProgress),
+            ],
+          );
+        },
       ),
     );
   }

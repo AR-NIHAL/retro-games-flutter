@@ -30,6 +30,7 @@ class _GameScreenState extends State<GameScreen>
   late AnimationController _idleCtrl;
   late AnimationController _shakeCtrl;
   final _audioPlayer = AudioPlayer();
+  bool _audioUnlocked = false;
 
   final _ai = GoalkeeperAI();
   final _random = Random();
@@ -65,6 +66,7 @@ class _GameScreenState extends State<GameScreen>
   @override
   void initState() {
     super.initState();
+    _audioPlayer.audioCache = AudioCache(prefix: '');
     _ballCtrl = AnimationController(vsync: this);
     _keeperCtrl = AnimationController(vsync: this);
     _idleCtrl = AnimationController(
@@ -153,6 +155,7 @@ class _GameScreenState extends State<GameScreen>
     final power = (speed / 3).clamp(0.3, 1.0);
 
     _executeShot(aimPosition, power, cleanliness);
+    _unlockAudio();
   }
 
   void _onPanCancel() {
@@ -333,16 +336,28 @@ class _GameScreenState extends State<GameScreen>
     _shakeCtrl.forward();
   }
 
-  Future<void> _playResultSound(ShotResult result) async {
+  Future<void> _unlockAudio() async {
+    if (_audioUnlocked) return;
+    _audioUnlocked = true;
     try {
-      final asset = switch (result) {
-        ShotResult.goal => 'asset/m.mp3',
-        ShotResult.saved => 'asset/s.mp3',
-        ShotResult.missed => 'asset/x.mp3',
-      };
+      await _audioPlayer.setSource(AssetSource('asset/s.mp3'));
+      await _audioPlayer.setVolume(0);
+      await _audioPlayer.resume();
       await _audioPlayer.stop();
-      await _audioPlayer.play(AssetSource(asset));
+      await _audioPlayer.setVolume(1);
     } catch (_) {}
+  }
+
+  Future<void> _playResultSound(ShotResult result) async {
+    final asset = switch (result) {
+      ShotResult.goal => 'asset/m.mp3',
+      ShotResult.saved => 'asset/s.mp3',
+      ShotResult.missed => 'asset/x.mp3',
+    };
+    try {
+      await _audioPlayer.stop();
+    } catch (_) {}
+    await _audioPlayer.play(AssetSource(asset));
   }
 
   // ---- BUILD ----
